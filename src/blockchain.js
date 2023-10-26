@@ -32,16 +32,26 @@ class Blockchain {
 
   async validateChain() {
     let errors = [];
-    for (let i = 0; i < this.chain.length; i++) {
-      let block = this.chain[i];
-      if (block.hash !== sha256(JSON.stringify(block)).toString()) {
-        errors.push(`Block ${i} hash is invalid`);
-      }
-      if (i > 0 && block.previousBlockHash !== this.chain[i - 1].hash) {
-        errors.push(`Block ${i} previousBlockHash is invalid`);
+    let self = this;
+    for (let i = 0; i < self.chain.length; i++) {
+      let block = self.chain[i];
+      try {
+        let isValid = await block.validate();
+        if (!isValid) {
+          errors.push(`Block ${block.height} is not valid`);
+        }
+      } catch (error) {
+        errors.push(error);
       }
     }
     return errors;
+  }
+
+  print() {
+    let self = this;
+    for (let block of self.chain) {
+      console.log(block.toString());
+    }
   }
 }
 
