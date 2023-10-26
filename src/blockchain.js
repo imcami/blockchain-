@@ -1,5 +1,5 @@
 import sha256 from "crypto-js/sha256.js";
-import Block from "./block";
+import Block from "./block.js";
 
 class Blockchain {
   constructor() {
@@ -55,4 +55,4 @@ class Blockchain {
   }
 }
 
-module.exports = Blockchain;
+export default Blockchain;

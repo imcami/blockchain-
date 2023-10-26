@@ -14,5 +14,4 @@ async function run() {
 
   blockchain.print();
 }
-
-export default run;
+run();

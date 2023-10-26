@@ -1,46 +1,54 @@
-import sha256 from "crypto-js/sha256";
-import hex2ascii from "hex2ascii";
+import sha256 from "crypto-js/sha256.js";
+import { hex2ascii } from "hex2ascii";
 
 class Block {
   constructor(data) {
-    this.hash = "";
+    this.hash = null;
     this.height = 0;
-    this.body = JSON.stringify(data).toString("hex");
+    this.body = Buffer.from(JSON.stringify(data).toString("hex"));
     this.time = 0;
-    this.previousBlockHash = "";
+    this.previousBlockHash = null;
   }
-  //validar que el bloque no haya sido manipulado ni hackeado
 
-  async validate() {
+  validate() {
     const self = this;
-    let currentHash = self.hash;
-    self.hash = sha256(JSON.stringify({ ...self, hash: null })).toString();
+    return new Promise((resolve, reject) => {
+      let currentHash = self.hash;
 
-    if (currentHash != self.hash) {
-      return false;
-    }
-    return true;
+      self.hash = sha256(JSON.stringify({ ...self, hash: null })).toString();
+
+      if (currentHash !== self.hash) {
+        return resolve(false);
+      }
+
+      resolve(true);
+    });
   }
 
-  async getBlockData() {
+  getBlockData() {
     const self = this;
-    let encodedData = self.body;
-    let decodedData = hex2ascii(encodedData);
-    let dataObject = JSON.parse(decodedData);
-    if (dataObject === "Genesis Block") {
-      reject(new Error("This is the Genesis Block"));
-    }
-    resolve(dataObject);
+    return new Promise((resolve, reject) => {
+      let encodedData = self.body;
+      let decodedData = hex2ascii(encodedData);
+      let dataObject = JSON.parse(decodedData);
+
+      if (dataObject === "Genesis Block") {
+        reject(new Error("This is the Genesis Block"));
+      }
+
+      resolve(dataObject);
+    });
   }
+
   toString() {
     const { hash, height, body, time, previousBlockHash } = this;
-    return `Block - 
-    hash: ${hash}
-    height: ${height}
-    body: ${body}
-    time: ${time}
-    previousBlockHash: ${previousBlockHash}
-    ---------------------------------------`;
+    return `Block -
+        hash: ${hash}
+        height: ${height}
+        body: ${body}
+        time: ${time}
+        previousBlockHash: ${previousBlockHash}
+        -------------------------------------`;
   }
 }
 

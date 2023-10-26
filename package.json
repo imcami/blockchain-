@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Camila Lo Nero",
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^4.2.0",
